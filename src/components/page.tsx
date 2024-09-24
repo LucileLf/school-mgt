@@ -37,7 +37,7 @@ const AdminPage = () => {
       </div>
 
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3 bg-gray-500">R</div>
+      <div className="w-full lg:w-1/3 bg-blue-500">R</div>
 
     </div>
   )
