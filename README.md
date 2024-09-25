@@ -1,3 +1,3 @@
 nextJs
 react recharts
-react calendar
+react calendar react-big-calendar w/ moment
