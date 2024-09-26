@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import {useState} from 'react'
+import TeacherForm from "./forms/TeacherForm";
 
 const FormModal = (
   {table, type, data, id}
@@ -27,8 +28,11 @@ const FormModal = (
 ) => {
 
   const size= type === 'create' ? "w-8 h-8" : "w-7 h-7";
+
   const bgColor = type === 'create' ? "bg-MySchoolYellow" : type === "update" ? "bg-MySchoolSky" : "bg-MySchoolPurple";
+
   const [open, setOpen] = useState(false)
+
   const Form = ()=> {
     return type === 'delete' && id ? (
       <form action="" className="p-4 flex flex-col gap-4">
@@ -36,8 +40,7 @@ const FormModal = (
         <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">Delete</button>
       </form>
     ) : (
-      <span>"create or update form"</span>
-
+      <TeacherForm type='update' data={data}/>
     )
   }
 
