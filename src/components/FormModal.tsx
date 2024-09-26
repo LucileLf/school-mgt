@@ -6,10 +6,20 @@ import { useState } from "react";
 // import TeacherForm from "./forms/TeacherForm";
 // import StudentForm from "./forms/StudentForm";
 
+//LAZY LOADING FOR CLIENT COMPONENT
 const TeacherForm = dynamic(()=>import("./forms/TeacherForm"), {
   loading: () => <h1>Loading</h1>,
 })
 const StudentForm = dynamic(()=>import("./forms/StudentForm"), {
+  loading: () => <h1>Loading</h1>,
+})
+const ClassForm = dynamic(()=>import("./forms/ClassForm"), {
+  loading: () => <h1>Loading</h1>,
+})
+const ExamForm = dynamic(()=>import("./forms/ExamForm"), {
+  loading: () => <h1>Loading</h1>,
+})
+const SubjectForm = dynamic(()=>import("./forms/SubjectForm"), {
   loading: () => <h1>Loading</h1>,
 })
 
@@ -18,6 +28,9 @@ const forms: {
 } = {
   teacher: (type, data) => <TeacherForm type={type} data={data} />,
   student: (type, data) => <StudentForm type={type} data={data} />,
+  class: (type, data) => <ClassForm type={type} data={data} />,
+  exam: (type, data) => <ExamForm type={type} data={data} />,
+  subject: (type, data) => <SubjectForm type={type} data={data} />,
 };
 const FormModal = ({
   table,
