@@ -8,6 +8,7 @@ import FormModal from "@/components/FormModal";
 import { Teacher, Subject, Class } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import {ITEM_PER_PAGE} from "@/lib/settings"
+import { Prisma } from '@prisma/client'
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -101,7 +102,21 @@ const TeacherListPage = async ({
   // console.log(searchParams);
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
-  
+
+  // URL PARAMS CONDITION
+  const query:Prisma.TeacherWhereInput = {};
+
+  if (queryParams) {
+    for(const [key, value] of Object.entries(queryParams)){
+      if(value !== undefined){
+      switch(key){
+        case "classId":
+          {query.lessons={some:{classId:parseInt(value)}}}
+      }}
+    }
+  } 
+
+
   //SINGLE REQUESTS * 2
   // const teachersData = await primsa.teacher.findMany({
   //   include: {
@@ -116,6 +131,7 @@ const TeacherListPage = async ({
   //TRANSATION W/ MULTIPLE REQUESTS
   const [teachersData, teachersCount] = await prisma.$transaction([
     prisma.teacher.findMany({
+      where: query,
       include: {
         subjects: true,
         classes: true,
@@ -123,7 +139,7 @@ const TeacherListPage = async ({
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1) // skip items from previous pages
     }),
-    prisma.teacher.count()
+    prisma.teacher.count({where:query})
   ])
 
 
