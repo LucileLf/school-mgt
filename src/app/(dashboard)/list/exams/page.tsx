@@ -84,7 +84,11 @@ const ExamListPage = async ({
             {lesson:{teacher:{name:{contains:value, mode:'insensitive'}}}},
             {lesson:{class:{name:{contains:value, mode:'insensitive'}}}}
           ]
+            break;
+          default:
+            break;
         }}
+
     }
   }
 
