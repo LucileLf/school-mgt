@@ -7,6 +7,7 @@ import { lessonsData, role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma, Subject, Lesson, Class, Teacher } from "@prisma/client";
+import { log } from "console";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -65,7 +66,7 @@ const LessonListPage = async ({
 
   // URL PARAMS CONDITION
   const query:Prisma.LessonWhereInput = {};
-
+  console.log("queryParams",queryParams)
   if (queryParams) {
     for(const [key, value] of Object.entries(queryParams)){
       if(value !== undefined){
@@ -74,8 +75,10 @@ const LessonListPage = async ({
           break;
         case "teacherId":query.teacherId=value;
           break;
-        case "search":query.name={contains:value, mode:"insensitive"};
-          break;
+        case "search":query.OR = [
+          {subject:{name:{contains:value, mode:'insensitive'}}},
+          {teacher:{name:{contains:value, mode:'insensitive'}}}
+        ]
       }}
     }
   } 
