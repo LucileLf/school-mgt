@@ -79,10 +79,10 @@ const AssignmentListPage = async ({
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch(key){
-          // case "classId":query.lesson = {classId: parseInt(value)};
-          //   break;
-          // case "teacherId":query.lesson = {teacherId: value}
-          //   break;
+          case "classId":query.lesson = {classId: parseInt(value)};
+            break;
+          case "teacherId":query.lesson = {teacherId: value}
+            break;
           // case "search":query.OR = [
           //   {lesson:{subject:{name:{contains:value, mode:'insensitive'}}}},
           //   {lesson:{teacher:{name:{contains:value, mode:'insensitive'}}}},
