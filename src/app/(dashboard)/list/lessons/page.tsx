@@ -6,11 +6,11 @@ import TableSearch from "@/components/TableSearch";
 import { lessonsData, role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Prisma, Lesson, Class, Teacher } from "@prisma/client";
+import { Prisma, Subject, Lesson, Class, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-type LessonList = Lesson & {class:  Class} & {teacher: Teacher}
+type LessonList = Lesson & {subject: Subject} & {class:  Class} & {teacher: Teacher} 
 
 const columns = [
   {
@@ -37,7 +37,7 @@ const renderRow = (item: LessonList) => (
     key={item.id}
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
   >
-    <td className="flex items-center gap-4 p-4">{item.name}</td>
+    <td className="flex items-center gap-4 p-4">{item.subject.name}</td>
     <td>{item.class.name}</td>
     <td className="hidden md:table-cell">{item.teacher.name} {item.teacher.surname}</td>
     <td>
@@ -70,6 +70,8 @@ const LessonListPage = async ({
     for(const [key, value] of Object.entries(queryParams)){
       if(value !== undefined){
       switch(key){
+        case "classId":query.classId=parseInt(value);
+          break;
         case "teacherId":query.teacherId=value;
           break;
         case "search":query.name={contains:value, mode:"insensitive"};
@@ -82,8 +84,9 @@ const LessonListPage = async ({
     prisma.lesson.findMany({
       where: query,
       include: {
-        teacher: true,
-        class: true
+        subject: {select: {name: true}},
+        class: {select: {name: true}},
+        teacher: {select: {name: true, surname: true}},
       },
       take: ITEM_PER_PAGE,
       skip: ITEM_PER_PAGE * (p - 1) // skip items from previous pages
