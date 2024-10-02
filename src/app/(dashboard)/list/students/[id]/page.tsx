@@ -92,9 +92,9 @@ const SingleStudentPage = () => {
           <div className="mt-4 flex gap-4 flex-wrap text-xs text-gray-500">
             <Link className="p-3 rounded-md bg-MySchoolSkyLight" href={`/list/lessons?classId=${2}`}>Student's Lessons</Link>
             <Link className="p-3 rounded-md bg-MySchoolPurpleLight" href={`/list/teachers?classId=${2}`}>Student's Teachers</Link>
-            <Link className="p-3 rounded-md bg-pink-50" href=''>Student's Exams</Link>
-            <Link className="p-3 rounded-md bg-MySchoolSkyLight" href=''>Student's Assignments</Link>
-            <Link className="p-3 rounded-md bg-MySchoolYellowLight" href=''>Student's Results</Link>
+            <Link className="p-3 rounded-md bg-pink-50" href={`/list/exams?classId=${2}`}>Student's Exams</Link>
+            <Link className="p-3 rounded-md bg-MySchoolSkyLight" href={`/list/assignments?classId=${2}`}>Student's Assignments</Link>
+            <Link className="p-3 rounded-md bg-MySchoolYellowLight" href={`/list/results?classId=${2}`}>Student's Results</Link>
           </div>
         </div>
 
