@@ -1,10 +1,26 @@
 'use client'
 
+import { useUser } from '@clerk/nextjs';
 import * as Clerk from '@clerk/elements/common'
 import * as SignIn from '@clerk/elements/sign-in'
 import Image from "next/image";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
+  const { isLoaded, isSignedIn, user } = useUser()
+  // console.log("user", user)
+  // console.log("role", user?.publicMetadata.role)
+
+  const router = useRouter();
+
+  useEffect(()=>{
+    const role = user?.publicMetadata.role;
+    if(role) {
+      router.push(`/${role}`)
+    }
+  }, [user, router])
+
   return (
    <div className='h-screen flex items-center justify-center bg-MySchoolSkyLight'>
       <SignIn.Root>
