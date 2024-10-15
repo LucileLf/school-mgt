@@ -3,9 +3,10 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUserId, role } from "@/lib/utils";
+import { currentUser } from "@clerk/nextjs/server";
 import {
   Prisma,
   Result,
@@ -15,22 +16,22 @@ import {
   Teacher,
   Subject,
   Student,
-  Exam
+  Exam,
 } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
 type ResultList = {
-  id: number; 
+  id: number;
   title: string;
   studentSurname: string;
   studentName: string;
   score: number;
   teacherName: string;
   teacherSurname: string;
-  className: string; 
-  date: Date
-}
+  className: string;
+  date: Date;
+};
 
 const columns = [
   {
@@ -61,10 +62,14 @@ const columns = [
     accessor: "date",
     className: "hidden md:table-cell",
   },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+  ...(role === "admin" || role === "teacher"
+    ? [
+        {
+          header: "Actions",
+          accessor: "action",
+        },
+      ]
+    : []),
 ];
 //student*
 //score*
@@ -74,23 +79,19 @@ const renderRow = (item: ResultList) => (
     key={item.id}
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
   >
-    <td className="flex items-center gap-4 p-4">
-      {item.title}
-    </td>
+    <td className="flex items-center gap-4 p-4">{item.title}</td>
     <td>{item.studentName + " " + item.studentSurname}</td>
     <td className="hidden md:table-cell">{item.score}</td>
     <td className="hidden md:table-cell">
-    {item.teacherName + " " + item.teacherSurname}
+      {item.teacherName + " " + item.teacherSurname}
     </td>
+    <td className="hidden md:table-cell">{item.className}</td>
     <td className="hidden md:table-cell">
-      {item.className}
-    </td>
-    <td className="hidden md:table-cell">
-    {new Intl.DateTimeFormat("fr-FR").format(item.date)}
+      {new Intl.DateTimeFormat("fr-FR").format(item.date)}
     </td>
     <td>
       <div className="flex items-center gap-2">
-        {role === "admin" && (
+        {(role === "admin" || role === "teacher") && (
           <>
             <FormModal table="result" type="update" id={item.id} />
             <FormModal table="result" type="delete" id={item.id} />
@@ -116,20 +117,43 @@ const ResultListPage = async ({
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
-        switch (key){
-          case "studentId":query.studentId = value;
+        switch (key) {
+          case "studentId":
+            query.studentId = value;
             break;
-          case "search": query.OR = [
-            {exam:{title:{contains:value, mode:'insensitive'}}},
-            {assignment:{title:{contains:value, mode:'insensitive'}}},
-            {student:{name:{contains:value, mode: 'insensitive'}}}
-          ]
-          break;
+          case "search":
+            query.OR = [
+              { exam: { title: { contains: value, mode: "insensitive" } } },
+              {
+                assignment: { title: { contains: value, mode: "insensitive" } },
+              },
+              { student: { name: { contains: value, mode: "insensitive" } } },
+            ];
+            break;
           default:
             break;
         }
       }
     }
+  }
+
+  // ROLE CONDITIONS
+
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      query.OR = [
+        { exam: { lesson: { teacherId: currentUserId! } } },
+        { assignment: { lesson: { teacherId: currentUserId! } } },
+      ];
+      break;
+    case "student":
+      query.studentId = currentUserId!;
+      break;
+    case "parent":
+      query.student = { parentId: currentUserId! };
+      break;
   }
 
   const [dataRes, resultsCount] = await prisma.$transaction([
@@ -141,8 +165,7 @@ const ResultListPage = async ({
           select: {
             title: true,
             startDate: true,
-            lesson: 
-            {
+            lesson: {
               select: {
                 teacher: { select: { name: true, surname: true } },
                 class: { select: { name: true } },
@@ -154,8 +177,7 @@ const ResultListPage = async ({
           select: {
             title: true,
             startTime: true,
-            lesson: 
-            {
+            lesson: {
               select: {
                 teacher: { select: { name: true, surname: true } },
                 class: { select: { name: true } },
@@ -172,22 +194,22 @@ const ResultListPage = async ({
     prisma.result.count({ where: query }),
   ]);
 
-  const resultsData = dataRes.map(item=>{
-    const assessment = item.exam || item.assignment
+  const resultsData = dataRes.map((item) => {
+    const assessment = item.exam || item.assignment;
     if (!assessment) return null;
     const isExam = "startTime" in assessment;
-    return{
-      id:item.id,
+    return {
+      id: item.id,
       title: assessment.title,
-      studentName:item.student.name,
-      studentSurname:item.student.surname,
+      studentName: item.student.name,
+      studentSurname: item.student.surname,
       score: item.score,
       teacherName: assessment.lesson.teacher.name,
       teacherSurname: assessment.lesson.teacher.surname,
       class: assessment.lesson.class,
-      date: isExam ? assessment.startTime : assessment.startDate 
-    }
-  })
+      date: isExam ? assessment.startTime : assessment.startDate,
+    };
+  });
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
@@ -202,7 +224,9 @@ const ResultListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="result" type="create" />}
+            {(role === "admin" || role === "teacher") && (
+              <FormModal table="result" type="create" />
+            )}
           </div>
         </div>
       </div>

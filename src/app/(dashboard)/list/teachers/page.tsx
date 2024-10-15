@@ -3,12 +3,12 @@ import TableSearch from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import { role } from "@/lib/data";
 import FormModal from "@/components/FormModal";
 import { Teacher, Subject, Class } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
+import { role } from "@/lib/utils";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -42,10 +42,9 @@ const columns = [
     accessor: "address",
     className: "hidden lg:table-cell",
   },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+  ...(role === "admin" ? [{
+    header:"Actions", accessor:"action",
+  },] : [])
 ];
 
 const renderRow = (item: TeacherList) => (

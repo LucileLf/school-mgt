@@ -3,15 +3,13 @@ import TableSearch from "@/components/TableSearch"
 import FormModal from "@/components/FormModal"
 import Table from "@/components/Table"
 import Image from "next/image"
-import Link from "next/link"
-import { role, parentsData } from "@/lib/data";
 import { Prisma, Parent, Student } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { ITEM_PER_PAGE } from "@/lib/settings"
+import { role } from "@/lib/utils"
 
 
 type ParentList = Parent & {students: Student[]}
-
 
 const columns = [
   {
@@ -26,9 +24,9 @@ const columns = [
   {
     header:"Address", accessor:"address", className:"hidden lg:table-cell"
   },
-  {
+  ...(role === "admin" || role === "teacher" ? [{
     header:"Actions", accessor:"action",
-  },
+  }] : []),
 ]
 
 const renderRow = (item: ParentList)=> (
@@ -115,9 +113,6 @@ const ParentListPage = async ({
               <Image src="/sort.png" alt="sort icon" width={14} height={14}/>
             </button>
             {role === 'admin' &&
-              // <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
-              //   <Image src="/plus.png" alt="plus icon" width={14} height={14}/>
-              // </button>
               <FormModal table="parent" type="create"/>
             }
           </div>

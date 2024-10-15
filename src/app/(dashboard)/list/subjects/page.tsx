@@ -22,6 +22,7 @@ const columns = [
     accessor: "teachers",
     className: "hidden md:table-cell",
   },
+  // no condition necessary because only admin can see this page
   {
     header: "Actions",
     accessor: "action",
@@ -42,11 +43,9 @@ const renderRow = (item: SubjectList) => (
             <Image src="/edit.png" alt="edit icon" width={16} height={16}/>
           </button>
         </Link>
-        {role ==="admin" &&
           <button className="w-7 h-7 flex items-center justify-center rounded-full bg-MySchoolPurple">
               <Image src="/delete.png" alt="trash icon" width={16} height={16}/>
           </button>
-        }
       </div>
     </td>
   </tr>
