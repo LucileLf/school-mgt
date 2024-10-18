@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
@@ -9,17 +10,17 @@ type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const EventCalendar = () => {
+
   const [value, onChange] = useState<Value>(new Date());
 
-  // when changing date, change URL
   const router = useRouter();
-
+  
+  // when changing date, change URL
   useEffect(() => {
     if (value instanceof Date) {
-      router.push(`?date=${value.toLocaleDateString('fr-FR')}`);
+      router.push(`?date=${value}`);
     }
   }, [value, router]);
-
   return <Calendar onChange={onChange} value={value}/>;
 };
 

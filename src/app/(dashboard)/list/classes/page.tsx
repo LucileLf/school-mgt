@@ -65,7 +65,7 @@ const ClassListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   
-  // console.log(searchParams);
+  console.log("searchParams",searchParams);
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
 

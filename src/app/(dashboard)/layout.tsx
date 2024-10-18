@@ -16,11 +16,15 @@ export default function DashboardLayout({
         <Image src="/logo.png" alt="logo" width={32} height={32}/>
         <span className="hidden lg:block font-bold">My School</span>
       </Link>
+                  {/* @ts-expect-error Server Component */}
+
       <Menu/>
     </div>
 
     {/* RIGHT */}
     <div className="w-[86%] md:w-[92%] lg:w-[84%] lg:w-[86%] bg-[#F7F8FA] overflow-scroll">
+                  {/* @ts-expect-error Server Component */}
+
       <Navbar/>
       {children}
     </div>
