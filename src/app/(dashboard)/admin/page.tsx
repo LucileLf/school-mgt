@@ -1,6 +1,6 @@
 import UserCard from "@/components/UserCard"
-import CountChart from "@/components/CountChart"
-import AttendanceChart from "@/components/AttendanceChart"
+import CountChartContainer from "@/components/CountChartContainer"
+import AttendanceChartContainer from "@/components/AttendanceChartContainer"
 import FinanceChart from "@/components/FinanceChart"
 import EventCalendar from "@/components/EventCalendar"
 import Announcements from "@/components/Announcements"
@@ -14,19 +14,25 @@ const AdminPage = () => {
 
         {/* CARDS */}
         <div className="flex gap-4 justify-between flex-wrap">
-          <UserCard type="student"/>
-          <UserCard type="parent"/>
+          {/* @ts-expect-error Server Component */}
+          <UserCard type="admin"/>
+          {/* @ts-expect-error Server Component */}
           <UserCard type="teacher"/>
-          <UserCard type="staff"/>
+          {/* @ts-expect-error Server Component */}
+          <UserCard type="student"/>
+          {/* @ts-expect-error Server Component */}
+          <UserCard type="parent"/>
         </div>
 
         {/* MIDDLE CHARTS */}
         <div className="flex gap-4 flex-column lg:flex-row">
           <div className="w-full lg:w-1/3 h-[450px]">
-            <CountChart/>
+            {/* @ts-expect-error Server Component */}
+            <CountChartContainer/>
           </div>
           <div className="w-full lg:w-2/3 h-[450px]">
-            <AttendanceChart/>
+            {/* @ts-expect-error Server Component */}
+            <AttendanceChartContainer/>
           </div>
         </div>
 

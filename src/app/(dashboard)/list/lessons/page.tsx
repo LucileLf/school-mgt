@@ -64,7 +64,7 @@ const LessonListPage = async ({
 
   // URL PARAMS CONDITION
   const query:Prisma.LessonWhereInput = {};
-  console.log("queryParams",queryParams)
+  // console.log("queryParams",queryParams)
   if (queryParams) {
     for(const [key, value] of Object.entries(queryParams)){
       if(value !== undefined){

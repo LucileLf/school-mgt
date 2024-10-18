@@ -11,7 +11,7 @@ const TableSearch = ({ page, count }: { page: number; count: number }) => {
 
   const changePage = (newPage: number) => {
     const params = new URLSearchParams(window.location.search);
-    console.log("params", params);
+    // console.log("params", params);
     params.set("page", newPage.toString());
     router.push(`${window.location.pathname}?${params}`);
   };
