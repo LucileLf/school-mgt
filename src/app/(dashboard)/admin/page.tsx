@@ -51,6 +51,7 @@ const AdminPage = ({
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
         {/* @ts-expect-error Server Component */}
         <EventCalendarContainer searchParams={searchParams}/>
+        {/* @ts-expect-error Server Component */}
         <Announcements/>
       </div>
 

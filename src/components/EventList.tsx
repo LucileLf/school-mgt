@@ -14,7 +14,7 @@ const EventList = async ({ dateParam }: { dateParam: string | undefined }) => {
   });
   return (
     <div className="">
-      {data.map((event) => (
+      {data.length > 0 ? data.map((event) => (
         <div
           className="p-5 rounded-md border-2 border-gray-100 border-t-4 odd:border-t-MySchoolSky even:border-t-MySchoolPurple"
           key={event.id}
@@ -31,7 +31,7 @@ const EventList = async ({ dateParam }: { dateParam: string | undefined }) => {
           </div>
           <p className="mt-2 text-gray-400 text-sm">{event.description}</p>
         </div>
-      ))}
+      )) : <p className="mt-2 text-gray-400 text-sm">No events today</p>}
     </div>
   );
 };
