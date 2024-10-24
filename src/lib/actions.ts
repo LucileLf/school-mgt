@@ -46,10 +46,8 @@ export const updateSubject = async (currentState: CurrentState, data:SubjectSche
 }
 
 export const deleteSubject = async (currentState: CurrentState, data:FormData)=>{
-
     // id can be number or string
     const id = data.get("id") as string
-
     try{
         await prisma.subject.delete({
           where:{
