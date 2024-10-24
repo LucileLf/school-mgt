@@ -3,12 +3,12 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role, subjectsData } from "@/lib/data";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma, Subject, Teacher} from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { role } from "@/lib/utils"
 
 type SubjectList = Subject &  {teachers: Teacher[]}
 
@@ -38,14 +38,9 @@ const renderRow = (item: SubjectList) => (
     <td className="hidden md:table-cell">{item.teachers.map(teacher=>teacher.name).join(", ")}</td>
     <td>
       <div className="flex items-center gap-2">
-        <Link href={`/list/students/${item.id}`}>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-MySchoolSky">
-            <Image src="/edit.png" alt="edit icon" width={16} height={16}/>
-          </button>
-        </Link>
-          <button className="w-7 h-7 flex items-center justify-center rounded-full bg-MySchoolPurple">
-              <Image src="/delete.png" alt="trash icon" width={16} height={16}/>
-          </button>
+        {/* no condition because only admin can see this page */}
+          <FormModal table="subject" type="update" id={item.id} />
+          <FormModal table="subject" type="delete" id={item.id} />
       </div>
     </td>
   </tr>
@@ -100,7 +95,7 @@ const SubjectListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="teacher" type="create" />}
+              <FormModal table="subject" type="create" />
           </div>
         </div>
       </div>
