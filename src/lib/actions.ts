@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache"
 import { SubjectSchema } from "./formValidationSchemas"
 import prisma from "./prisma"
-import { boolean } from "zod"
 
 type CurrentState = {
   success: boolean;
@@ -16,6 +15,9 @@ export const createSubject = async (currentState: CurrentState, data:SubjectSche
         await prisma.subject.create({
             data:{
                 name:data.name,
+                teachers:{
+                  connect:data.teachers.map(teacherId=>({id:teacherId}))
+                }
             }
         })
         // revalidatePath("/list/subjects")
@@ -35,6 +37,9 @@ export const updateSubject = async (currentState: CurrentState, data:SubjectSche
           },
           data:{
                 name:data.name,
+                teachers:{
+                  set:data.teachers.map((teacherId)=>({id:teacherId}))
+                }
             }
         })
         // revalidatePath("/list/subjects")
