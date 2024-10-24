@@ -39,7 +39,7 @@ const renderRow = (item: SubjectList) => (
     <td>
       <div className="flex items-center gap-2">
         {/* no condition because only admin can see this page */}
-          <FormModal table="subject" type="update" id={item.id} />
+          <FormModal table="subject" type="update" data={item} />
           <FormModal table="subject" type="delete" id={item.id} />
       </div>
     </td>
@@ -51,7 +51,7 @@ const SubjectListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  
+
   // console.log(searchParams);
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
@@ -67,7 +67,7 @@ const SubjectListPage = async ({
           break;
       }}
     }
-  } 
+  }
 
   const [subjectsData, subjectsCount] = await prisma.$transaction([
     prisma.subject.findMany({
@@ -80,7 +80,7 @@ const SubjectListPage = async ({
     }),
     prisma.subject.count({where:query})
   ])
-  
+
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
       {/* TOP */}
