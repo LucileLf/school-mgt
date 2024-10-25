@@ -1,13 +1,15 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { SubjectSchema } from "./formValidationSchemas"
+import { SubjectSchema, ClassSchema } from "./formValidationSchemas"
 import prisma from "./prisma"
 
 type CurrentState = {
   success: boolean;
   error: boolean
 }
+
+// SUBJECTS
 
 export const createSubject = async (currentState: CurrentState, data:SubjectSchema)=>{
     // console.log(data.name + " in the server action" )
@@ -60,6 +62,56 @@ export const deleteSubject = async (currentState: CurrentState, data:FormData)=>
           }
         })
         // revalidatePath("/list/subjects")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+
+// CLASSES
+
+export const createClass = async (currentState: CurrentState, data:ClassSchema)=>{
+    // console.log(data.name + " in the server action" )
+    try{
+        await prisma.class.create({
+            data
+        })
+        // revalidatePath("/list/classes")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+
+export const updateClass = async (currentState: CurrentState, data:ClassSchema)=>{
+    // console.log(data.name + " in the server action" )
+    try{
+        await prisma.class.update({
+          where:{
+            id:data.id
+          },
+          data
+        })
+        // revalidatePath("/list/classes")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+
+export const deleteClass = async (currentState: CurrentState, data:FormData)=>{
+    // id can be number or string
+    const id = data.get("id") as string
+    try{
+        await prisma.class.delete({
+          where:{
+            id:parseInt(id)
+          }
+        })
+        // revalidatePath("/list/classes")
         return {success:true, error: false}
     }catch(err){
         console.log(err)

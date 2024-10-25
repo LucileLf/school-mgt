@@ -40,7 +40,9 @@ const renderRow = (item: SubjectList) => (
     <td>
       <div className="flex items-center gap-2">
         {/* no condition because only admin can see this page */}
+          {/* @ts-expect-error Server Component */}
           <FormContainer table="subject" type="update" data={item} />
+          {/* @ts-expect-error Server Component */}
           <FormContainer table="subject" type="delete" id={item.id} />
       </div>
     </td>
@@ -96,6 +98,7 @@ const SubjectListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
+              {/* @ts-expect-error Server Component */}
               <FormContainer table="subject" type="create" />
           </div>
         </div>

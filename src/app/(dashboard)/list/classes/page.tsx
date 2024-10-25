@@ -1,5 +1,4 @@
-// import FormModal from "@/components/FormModal";
-import FormModal from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -50,8 +49,10 @@ const renderRow = (item: ClassList) => (
       <div className="flex items-center gap-2">
         {role ==="admin" &&
         <>
-          <FormModal table="class" type="update" id={item.id}/>
-          <FormModal table="class" type="delete" id={item.id}/>
+          {/* @ts-expect-error Server Component */}
+          <FormContainer table="class" type="update" id={item.id} data={item}/>
+          {/* @ts-expect-error Server Component */}
+          <FormContainer table="class" type="delete" id={item.id}/>
         </>
         }
       </div>
@@ -64,7 +65,7 @@ const ClassListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  
+
   console.log("searchParams",searchParams);
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
@@ -84,7 +85,7 @@ const ClassListPage = async ({
           break;
       }}
     }
-  } 
+  }
 
   const [classesData, classesCount] = await prisma.$transaction([
     prisma.class.findMany({
@@ -111,7 +112,8 @@ const ClassListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="class" type="create" />}
+            {/* @ts-expect-error Server Component */}
+            {role === "admin" && <FormContainer table="class" type="create" />}
           </div>
         </div>
       </div>
