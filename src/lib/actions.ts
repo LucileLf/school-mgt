@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { SubjectSchema, ClassSchema } from "./formValidationSchemas"
+import { SubjectSchema, ClassSchema, TeacherSchema } from "./formValidationSchemas"
 import prisma from "./prisma"
 
 type CurrentState = {
@@ -112,6 +112,55 @@ export const deleteClass = async (currentState: CurrentState, data:FormData)=>{
           }
         })
         // revalidatePath("/list/classes")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+// TEACHERS
+
+export const createTeacher = async (currentState: CurrentState, data:TeacherSchema)=>{
+    // console.log(data.name + " in the server action" )
+    try{
+        await prisma.teacher.create({
+            data
+        })
+        // revalidatePath("/list/teachers")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+
+export const updateTeacher = async (currentState: CurrentState, data:TeacherSchema)=>{
+    // console.log(data.name + " in the server action" )
+    try{
+        await prisma.teacher.update({
+          where:{
+            id:data.id
+          },
+          data
+        })
+        // revalidatePath("/list/teachers")
+        return {success:true, error: false}
+    }catch(err){
+        console.log(err)
+        return {success:false, error: true}
+    }
+}
+
+export const deleteTeacher = async (currentState: CurrentState, data:FormData)=>{
+    // id can be number or string
+    const id = data.get("id") as string
+    try{
+        await prisma.teacher.delete({
+          where:{
+            id:id
+          }
+        })
+        // revalidatePath("/list/teachers")
         return {success:true, error: false}
     }catch(err){
         console.log(err)

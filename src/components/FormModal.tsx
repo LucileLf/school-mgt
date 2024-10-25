@@ -5,7 +5,7 @@ import Image from "next/image";
 import { userAgentFromString } from "next/server";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { deleteSubject, deleteClass } from "@/lib/actions";
+import { deleteSubject, deleteClass, deleteTeacher } from "@/lib/actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/(dashboard)/list/loading";
@@ -14,7 +14,7 @@ import { FormContainerProps } from "./FormContainer";
 const deleteActionMap= {
   subject: deleteSubject,
   class: deleteClass,
-  // teacher: deleteTeacher,
+  teacher: deleteTeacher,
   // student: deleteStudent,
   // parent: deleteParent,
   // lesson: deleteLesson,
@@ -39,16 +39,16 @@ const SubjectForm = dynamic(()=>import("./forms/SubjectForm"), {
 const ClassForm = dynamic(()=>import("./forms/ClassForm"), {
   loading: () => <Loading/>,
 })
-// const ExamForm = dynamic(()=>import("./forms/ExamForm"), {
-//   loading: () => <Loading/>,
-// })
+const ExamForm = dynamic(()=>import("./forms/ExamForm"), {
+  loading: () => <Loading/>,
+})
 
 const forms: {
   [key: string]: (setOpen: Dispatch<SetStateAction<boolean>>, type: "create" | "update", data?: any, relatedData?: any) => JSX.Element;
 } = {
   subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
-  // teacher: (type, data, setOpen) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
+  teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   // student: (type, data, setOpen) => <StudentForm type={type} data={data} setOpen={setOpen}/>,
   // exam: (type, data) => <ExamForm type={type} data={data} />,
 };
