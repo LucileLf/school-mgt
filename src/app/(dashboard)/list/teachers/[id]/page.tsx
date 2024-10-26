@@ -2,10 +2,27 @@ import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
 import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
+import prisma from "@/lib/prisma";
+import { Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-const SingleTeacherPage = () => {
+const SingleTeacherPage = async ({params:{id}}:{params:{id:string}}) => {
+  // console.log("teacherid", params.id)
+
+  const teacher: Teacher | null = await prisma.teacher.findUnique({
+      where: {id:id},
+      include: {
+        subjects: true,
+        classes: true,
+      },
+    })
+
+    if(!teacher) {
+      return notFound()
+    }
+
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
       {/* LEFT */}

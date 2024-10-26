@@ -3,13 +3,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputField from "../InputField";
-import Image from "next/image"
+import Image from "next/image";
 import { TeacherSchema, teacherSchema } from "@/lib/formValidationSchemas";
 import { createTeacher, updateTeacher } from "@/lib/actions";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { CldUploadWidget } from "next-cloudinary";
 
 const TeacherForm = ({
   type,
@@ -20,7 +21,7 @@ const TeacherForm = ({
   type: "create" | "update";
   data?: any;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  relatedData?: any,
+  relatedData?: any;
 }) => {
   const {
     register,
@@ -30,34 +31,38 @@ const TeacherForm = ({
     resolver: zodResolver(teacherSchema),
   });
 
- // USEACTIONSTATE ONLY AFTER REACT 19
- const [state, formAction] = useFormState(
-  type === "create" ? createTeacher : updateTeacher,
-  { success: false, error: false }
-);
+  const [img, setImg] = useState<any>();
 
-const onSubmit = handleSubmit((data) => {
-  // console.log(data);
-  formAction(data);
-});
+  // USEACTIONSTATE ONLY AFTER REACT 19
+  const [state, formAction] = useFormState(
+    type === "create" ? createTeacher : updateTeacher,
+    { success: false, error: false }
+  );
 
-const router = useRouter();
 
-useEffect(() => {
-  if (state.success) {
-    toast(`Teacher has been ${type === "create" ? "created" : "updated"}`);
-    setOpen(false);
-    router.refresh();
-  }
-}, [state]);
+  const onSubmit = handleSubmit((data) => {
+    // console.log(data);
+    formAction({...data, img: img?.secure_url});
+  });
 
-const { subjects } = relatedData;
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      toast(`Teacher has been ${type === "create" ? "created" : "updated"}`);
+      setOpen(false);
+      router.refresh();
+    }
+  }, [state]);
+
+  const { subjects } = relatedData;
 
   return (
     <form className="flex flex-col gap-8 " onSubmit={onSubmit}>
-
       <h1 className="text-xl font-semibold">
-        {type === "create" ? "Create a new teacher" : `Update ${data?.name} ${data?.surname}`}
+        {type === "create"
+          ? "Create a new teacher"
+          : `Update ${data?.name} ${data?.surname}`}
       </h1>
 
       <span className="text-xs text-gray-400 font-medium">
@@ -138,28 +143,33 @@ const { subjects } = relatedData;
         />
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Sex</label>
-          <select className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full" {...register("sex")} defaultValue={data?.sex}>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+          <select
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            {...register("sex")}
+            defaultValue={data?.sex}
+          >
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
           {errors.sex?.message && (
-            <p className="text-sm text-red-400">{errors.sex?.message.toString()}</p>
+            <p className="text-sm text-red-400">
+              {errors.sex?.message.toString()}
+            </p>
           )}
         </div>
         <div className="flex flex-col gap-2 w-full md:w-1/4">
           <label className="text-xs text-gray-500">Subjects</label>
-          <select multiple={true}
+          <select
+            multiple={true}
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             {...register("subjects")}
             defaultValue={data?.subjects}
           >
-            {subjects.map(
-              (subject: { id: number; name: string }) => (
-                <option key={subject.id} value={subject.id}>
-                  {subject.name}
-                </option>
-              )
-            )}
+            {subjects.map((subject: { id: number; name: string }) => (
+              <option key={subject.id} value={subject.id}>
+                {subject.name}
+              </option>
+            ))}
           </select>
           {errors.subjects?.message && (
             <p className="text-sm text-red-400">
@@ -167,18 +177,31 @@ const { subjects } = relatedData;
             </p>
           )}
         </div>
-        {/* <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
-          <label className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer" htmlFor='img'>
-            <Image src="/upload.png" alt="" width={28} height={28}/>
-            <span>Upload a photo</span>
-          </label>
-          <input type="file" id="img" {...register("img")} className="hidden"/>
-          {errors.img?.message && (
-            <p className="text-sm text-red-400">{errors.img?.message.toString()}</p>
-          )}
-        </div> */}
+
+        <CldUploadWidget
+          uploadPreset="school"
+          onSuccess={(result, { widget }) => {
+            setImg(result.info);
+            widget.close();
+          }}
+        >
+          {({ open }) => {
+            return (
+              <div
+                className="text-xs text-gray-500 flex items-center gap-2 cursor-pointer"
+                onClick={() => open()}
+              >
+                <Image src="/upload.png" alt="" width={28} height={28} />
+                <span>Upload a photo</span>
+              </div>
+            );
+          }}
+        </CldUploadWidget>
       </div>
 
+      {state.error && (
+        <span className="text-red-500">Something went wrong!</span>
+      )}
       <button className="bg-blue-400 text-white p-2 rounded-md">
         {type === "create" ? "Create" : "Update"}
       </button>
