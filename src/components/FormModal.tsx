@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Loading from "@/app/(dashboard)/list/loading";
 import { FormContainerProps } from "./FormContainer";
 
-const deleteActionMap= {
+const deleteActionMap:  Record<any, any>= {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,

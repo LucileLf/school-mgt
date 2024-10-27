@@ -19,15 +19,19 @@ const SingleTeacherPage = async ({
   const { sessionClaims } = auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
-  const teacher: (Teacher & {_count:{subjects:number;lessons:number;classes:number}}) | null = await prisma.teacher.findUnique({
+  const teacher:
+    | (Teacher & {
+        _count: { subjects: number; lessons: number; classes: number };
+      })
+    | null = await prisma.teacher.findUnique({
     where: { id: id },
     include: {
-      _count:{
+      _count: {
         select: {
-          subjects:true,
-          lessons:true,
-          classes:true,
-        }
+          subjects: true,
+          lessons: true,
+          classes: true,
+        },
       },
       classes: true,
     },
@@ -60,7 +64,7 @@ const SingleTeacherPage = async ({
                   {teacher.name + " " + teacher.surname}
                 </h1>
                 {/* @ts-expect-error Server Component */}
-                {role === "admin" && (<FormContainer table="teacher" type="update" data={teacher} /> )}
+                {role === "admin" && <FormContainer table="teacher" type="update" data={teacher} />}
               </div>
               <p className="text-sm text-gray-500">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit.
@@ -82,7 +86,9 @@ const SingleTeacherPage = async ({
                     width={14}
                     height={14}
                   />
-                  <span>{new Intl.DateTimeFormat("fr-FR").format(teacher.birthday)}</span>
+                  <span>
+                    {new Intl.DateTimeFormat("fr-FR").format(teacher.birthday)}
+                  </span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full 2xl:w-1/3 flex items-center gap-2">
                   <Image
@@ -130,7 +136,9 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="div">
-                <h1 className="text-xl font-semibold">{teacher._count.subjects}</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.subjects}
+                </h1>
                 <span className="text-sm text-gray-400">Branches</span>
               </div>
             </div>
@@ -143,7 +151,9 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="div">
-                <h1 className="text-xl font-semibold">{teacher._count.lessons}</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.lessons}
+                </h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -156,7 +166,9 @@ const SingleTeacherPage = async ({
                 className="w-6 h-6"
               />
               <div className="div">
-                <h1 className="text-xl font-semibold">{teacher._count.classes}</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.classes}
+                </h1>
                 <span className="text-sm text-gray-400">Classes</span>
               </div>
             </div>
