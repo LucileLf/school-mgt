@@ -5,7 +5,7 @@ import Image from "next/image";
 import { userAgentFromString } from "next/server";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { deleteSubject, deleteClass, deleteTeacher } from "@/lib/actions";
+import { deleteSubject, deleteClass, deleteTeacher, deleteStudent } from "@/lib/actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/(dashboard)/list/loading";
@@ -15,7 +15,7 @@ const deleteActionMap:  Record<any, any>= {
   subject: deleteSubject,
   class: deleteClass,
   teacher: deleteTeacher,
-  // student: deleteStudent,
+  student: deleteStudent,
   // parent: deleteParent,
   // lesson: deleteLesson,
   // exam: deleteExam,
@@ -49,7 +49,8 @@ const forms: {
   subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
-  // student: (type, data, setOpen) => <StudentForm type={type} data={data} setOpen={setOpen}/>,
+  student: (setOpen, type, data, relatedData) => <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
+  // teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   // exam: (type, data) => <ExamForm type={type} data={data} />,
 };
 const FormModal = ({
@@ -77,11 +78,11 @@ const FormModal = ({
     const router = useRouter()
 
     useEffect(()=>{
-        if(state.success) {
-          toast(`${table} has been deleted`)
-          setOpen(false)
-          router.refresh()
-        }
+      if(state.success) {
+        toast(`${table} has been deleted`)
+        setOpen(false)
+        router.refresh()
+      }
     })
 
     return type === "delete" && id ? (

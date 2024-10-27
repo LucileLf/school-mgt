@@ -1,6 +1,7 @@
 import Announcements from "@/components/Announcements";
-import BigCalendar from "@/components/BigCalendar";
+import BigCalendarContainer from "@/components/BigCalendarContainer";
 import Performance from "@/components/Performance";
+import FormContainer from "@/components/FormContainer";
 import StudentAttendanceCard from "@/components/StudentAttendanceCard";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -66,9 +67,13 @@ const SingleStudentPage = async ({
               />
             </div>
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <h1 className="text-xl font-semibold">
-                {student.name + " " + student.surname}
-              </h1>
+              <div className="flex items-center gap-4">
+                <h1 className="text-xl font-semibold">
+                  {student.name + " " + student.surname}
+                </h1>
+                {/* @ts-expect-error Server Component */}
+                {role === "admin" && <FormContainer table="student" type="update" data={student} />}
+              </div>
               <p className="text-sm text-gray-500">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit.
               </p>
@@ -127,7 +132,7 @@ const SingleStudentPage = async ({
               />
               <Suspense fallback="loading...">
                 {/* @ts-expect-error Server Component */}
-                <StudentAttendanceCard studentId={id}/>
+                <StudentAttendanceCard studentId={student.id}/>
               </Suspense>
             </div>
             <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
@@ -176,7 +181,7 @@ const SingleStudentPage = async ({
         <div className="mt-4 bg-whiterounded-md p-4h-[800px]">
           <h1>Student's Schedule</h1>
           {/* @ts-expect-error Server Component */}
-          <BigCalendar />
+          <BigCalendarContainer type="classId" id={student.class.id}/>
         </div>
       </div>
       {/* RIGHT */}
