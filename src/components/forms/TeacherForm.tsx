@@ -98,6 +98,18 @@ const TeacherForm = ({
         Personal Information
       </span>
       <div className="flex justify-between flex-wrap gap-4">
+          {/* if in update mode */}
+          {data && (
+            <InputField
+              label="Id"
+              name="id"
+              defaultValue={data?.id}
+              register={register}
+              error={errors?.id}
+              hidden
+            />
+          )}
+
         <InputField
           label="Name"
           name="name"
@@ -137,7 +149,7 @@ const TeacherForm = ({
           label="Birthday"
           name="birthday"
           type="date"
-          defaultValue={data?.birthday}
+          defaultValue={data?.birthday.toISOString().split("T")[0]}
           register={register}
           error={errors.birthday}
         />

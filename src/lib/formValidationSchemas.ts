@@ -37,7 +37,9 @@ export const teacherSchema = z.object({
   email: z.string().email({ message: "Invalid email address!" }).optional().or(z.literal("")), // if not empty string must be correct
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long!" }),
+    .min(8, { message: "Password must be at least 8 characters long!" })
+    .optional() // not needed for update form
+    .or(z.literal("")),
   name: z.string().min(1, { message: "Name is required!" }),
   surname: z.string().min(1, { message: "Surname is required!" }),
   phone: z.string().optional(),
