@@ -80,43 +80,15 @@ export const studentSchema = z.object({
 
 export type StudentSchema = z.infer<typeof studentSchema>;
 
+export const examSchema = z.object({
+  // id not needed for create form
+  id: z.coerce.number().optional(),
+  title: z
+    .string()
+    .min(1, { message: "Exam title is required!" }),
+    startTime:z.coerce.date({message:"Start time is required!"}),
+    endTime:z.coerce.date({message:"End time is required!"}),
+    lessonId: z.coerce.number({message: "Lesson is required!"})
+});
 
-// export const teacherSchema = z.object({
-//   // id not needed for create form
-//   id: z.coerce.string().optional(), // coerce prevents returning string when parsing objects
-//   username: z
-//     .string()
-//     .min(1, { message: "Teacher username is required!" }),
-//   name: z
-//     .string()
-//     .min(1, { message: "Teacher name is required!" }),
-//   surname: z
-//     .string()
-//     .min(1, { message: "Teacher surname is required!" }),
-//   email: z
-//     .string()
-//     .min(1, { message: "Teacher email is required!" }),
-//   phone: z
-//     .string()
-//     .min(1, { message: "Teacher phone is required!" }),
-//   address: z
-//     .string()
-//     .min(1, { message: "Teacher address is required!" }),
-//   img: z
-//     .string()
-//     .min(1, { message: "Teacher img is required!" }),
-//   bloodType: z
-//     .string()
-//     .min(1, { message: "Teacher blood type is required!" }),
-//   sex: z
-//     .enum(UserSex)
-//     // .string()
-//     .min(1, { message: "Teacher sex is required!" }),
-
-
-//   capacity: z.coerce.number().min(1, { message: "Grade is required!" }),
-//   gradeId: z.coerce.number().min(1, { message: "Capacity is required!" }),
-//   supervisorId: z.coerce.string().optional()
-// });
-
-// export type TeacherSchema = z.infer<typeof teacherSchema>;
+export type ExamSchema = z.infer<typeof examSchema>;

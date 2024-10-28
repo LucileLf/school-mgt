@@ -5,7 +5,7 @@ import Image from "next/image";
 import { userAgentFromString } from "next/server";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useFormState } from "react-dom";
-import { deleteSubject, deleteClass, deleteTeacher, deleteStudent } from "@/lib/actions";
+import { deleteSubject, deleteClass, deleteTeacher, deleteStudent, deleteExam } from "@/lib/actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/(dashboard)/list/loading";
@@ -16,6 +16,7 @@ const deleteActionMap:  Record<any, any>= {
   class: deleteClass,
   teacher: deleteTeacher,
   student: deleteStudent,
+  exam: deleteExam,
   // parent: deleteParent,
   // lesson: deleteLesson,
   // exam: deleteExam,
@@ -50,8 +51,7 @@ const forms: {
   class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
   student: (setOpen, type, data, relatedData) => <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
-  // teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
-  // exam: (type, data) => <ExamForm type={type} data={data} />,
+  exam: (setOpen, type, data, relatedData) => <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData}/>,
 };
 const FormModal = ({
   table,
@@ -70,6 +70,7 @@ const FormModal = ({
       : "bg-MySchoolPurple";
 
   const [open, setOpen] = useState(false);
+// console.log("relatedData from form modal", relatedData);
 
   const Form = () => {
 
