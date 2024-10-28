@@ -17,7 +17,6 @@ const TeacherListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-
   const { sessionClaims } = auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
@@ -51,9 +50,14 @@ const TeacherListPage = async ({
       accessor: "address",
       className: "hidden lg:table-cell",
     },
-    ...(role === "admin" ? [{
-      header:"Actions", accessor:"action",
-    },] : [])
+    ...(role === "admin"
+      ? [
+          {
+            header: "Actions",
+            accessor: "action",
+          },
+        ]
+      : []),
   ];
 
   const renderRow = (item: TeacherList) => (
@@ -90,8 +94,10 @@ const TeacherListPage = async ({
               <Image src="/view.png" alt="eye icon" width={16} height={16} />
             </button>
           </Link>
-          {/* @ts-expect-error Server Component */}
-          {role === "admin" && <FormContainer table="teacher" type="delete" id={item.id} />}
+
+          {role === "admin" && (
+            <FormContainer table="teacher" type="delete" id={item.id} />
+          )}
         </div>
       </td>
     </tr>
@@ -114,9 +120,9 @@ const TeacherListPage = async ({
             break;
           case "search":
             query.name = { contains: value, mode: "insensitive" };
-          break;
-            default:
-          break;
+            break;
+          default:
+            break;
         }
       }
     }
@@ -166,8 +172,10 @@ const TeacherListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="sort icon" width={14} height={14} />
             </button>
-            {/* @ts-expect-error Server Component */}
-            {role === "admin" && <FormContainer table="teacher" type="create" /> }
+
+            {role === "admin" && (
+              <FormContainer table="teacher" type="create" />
+            )}
           </div>
         </div>
       </div>

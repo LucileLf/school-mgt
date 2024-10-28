@@ -52,14 +52,16 @@ const ExamListPage = async ({
       : []),
   ];
 
-  console.log("role", role)
+  console.log("role", role);
 
   const renderRow = (item: ExamList) => (
     <tr
       key={item.id}
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
     >
-      <td className="flex items-center gap-4 p-4">{item.lesson.subject.name}</td>
+      <td className="flex items-center gap-4 p-4">
+        {item.lesson.subject.name}
+      </td>
       <td>{item.lesson.class.name}</td>
       <td className="hidden md:table-cell">
         {item.lesson.teacher.name} {item.lesson.teacher.surname}
@@ -71,9 +73,8 @@ const ExamListPage = async ({
         <div className="flex items-center gap-2">
           {(role === "admin" || role === "teacher") && (
             <>
-              {/* @ts-expect-error Server Component */}
               <FormContainer table="exam" type="update" id={item.id} />
-              {/* @ts-expect-error Server Component */}
+
               <FormContainer table="exam" type="delete" id={item.id} />
             </>
           )}
@@ -81,7 +82,6 @@ const ExamListPage = async ({
       </td>
     </tr>
   );
-
 
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
@@ -169,8 +169,10 @@ const ExamListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {/* @ts-expect-error Server Component */}
-            {(role === "admin" || role == "teacher") && <FormContainer table="exam" type="create" />}
+
+            {(role === "admin" || role == "teacher") && (
+              <FormContainer table="exam" type="create" />
+            )}
           </div>
         </div>
       </div>

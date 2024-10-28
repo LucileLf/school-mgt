@@ -19,20 +19,21 @@ const SingleStudentPage = async ({
   const { sessionClaims } = auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
-  const student: (Student & { class: (Class & {_count: {lessons: number}})}) | null =
-    await prisma.student.findUnique({
-      where: { id: id },
-      include: {
-        class: {include: {_count:{select: {lessons:true}}}}
-        // attendances: true,
-      },
-    });
+  const student:
+    | (Student & { class: Class & { _count: { lessons: number } } })
+    | null = await prisma.student.findUnique({
+    where: { id: id },
+    include: {
+      class: { include: { _count: { select: { lessons: true } } } },
+      // attendances: true,
+    },
+  });
 
   if (!student) {
     return notFound();
   }
 
-  const grade = student.class.name.charAt(0)
+  const grade = student.class.name.charAt(0);
 
   const gradeSuffixMap: Record<string, string> = {
     "1": "st",
@@ -47,7 +48,7 @@ const SingleStudentPage = async ({
     // attendance: deleteAttendance,
     // event: deleteEvent,
     // announcement: deleteAnnouncement,
-  }
+  };
 
   return (
     <div className="flex-1 p-4 flex flex-col xl:flex-row gap-4">
@@ -71,8 +72,10 @@ const SingleStudentPage = async ({
                 <h1 className="text-xl font-semibold">
                   {student.name + " " + student.surname}
                 </h1>
-                {/* @ts-expect-error Server Component */}
-                {role === "admin" && <FormContainer table="student" type="update" data={student} />}
+
+                {role === "admin" && (
+                  <FormContainer table="student" type="update" data={student} />
+                )}
               </div>
               <p className="text-sm text-gray-500">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit.
@@ -131,8 +134,7 @@ const SingleStudentPage = async ({
                 className="w-6 h-6"
               />
               <Suspense fallback="loading...">
-                {/* @ts-expect-error Server Component */}
-                <StudentAttendanceCard studentId={student.id}/>
+                <StudentAttendanceCard studentId={student.id} />
               </Suspense>
             </div>
             <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
@@ -144,7 +146,10 @@ const SingleStudentPage = async ({
                 className="w-6 h-6"
               />
               <div className="div">
-                <h1 className="text-xl font-semibold">{grade}{gradeSuffixMap[grade]}</h1>
+                <h1 className="text-xl font-semibold">
+                  {grade}
+                  {gradeSuffixMap[grade]}
+                </h1>
                 <span className="text-sm text-gray-400">Grade</span>
               </div>
             </div>
@@ -157,7 +162,9 @@ const SingleStudentPage = async ({
                 className="w-6 h-6"
               />
               <div className="div">
-                <h1 className="text-xl font-semibold">{student.class._count.lessons}</h1>
+                <h1 className="text-xl font-semibold">
+                  {student.class._count.lessons}
+                </h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -179,9 +186,9 @@ const SingleStudentPage = async ({
 
         {/* BOTTOM */}
         <div className="mt-4 bg-whiterounded-md p-4h-[800px]">
-          <h1>Student's Schedule</h1>
-          {/* @ts-expect-error Server Component */}
-          <BigCalendarContainer type="classId" id={student.class.id}/>
+          <h1>Student&#39;s Schedule</h1>
+
+          <BigCalendarContainer type="classId" id={student.class.id} />
         </div>
       </div>
       {/* RIGHT */}
@@ -193,37 +200,37 @@ const SingleStudentPage = async ({
               className="p-3 rounded-md bg-MySchoolSkyLight"
               href={`/list/lessons?classId=${2}`}
             >
-              Student's Lessons
+              Student&#39;s Lessons
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolPurpleLight"
               href={`/list/teachers?classId=${2}`}
             >
-              Student's Teachers
+              Student&#39;s Teachers
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
               href={`/list/exams?classId=${2}`}
             >
-              Student's Exams
+              Student&#39;s Exams
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolSkyLight"
               href={`/list/assignments?classId=${2}`}
             >
-              Student's Assignments
+              Student&#39;s Assignments
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolYellowLight"
               href={`/list/results?studentId=${"student2"}`}
             >
-              Student's Results
+              Student&#39;s Results
             </Link>
           </div>
         </div>
 
         <Performance />
-        {/* @ts-expect-error Server Component */}
+
         <Announcements />
       </div>
     </div>

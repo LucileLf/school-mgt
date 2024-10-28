@@ -63,8 +63,10 @@ const SingleTeacherPage = async ({
                 <h1 className="text-xl font-semibold">
                   {teacher.name + " " + teacher.surname}
                 </h1>
-                {/* @ts-expect-error Server Component */}
-                {role === "admin" && <FormContainer table="teacher" type="update" data={teacher} />}
+
+                {role === "admin" && (
+                  <FormContainer table="teacher" type="update" data={teacher} />
+                )}
               </div>
               <p className="text-sm text-gray-500">
                 Lorem, ipsum dolor sit amet consectetur adipisicing elit.
@@ -177,9 +179,9 @@ const SingleTeacherPage = async ({
 
         {/* BOTTOM */}
         <div className="mt-4 bg-whiterounded-md p-4h-[800px]">
-          <h1>Teacher's Schedule</h1>
-          {/* @ts-expect-error Server Component */}
-          <BigCalendarContainer type='teacherId' id={teacher.id}/>
+          <h1>Teacher&#39;s Schedule</h1>
+
+          <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>
       </div>
       {/* RIGHT */}
@@ -191,38 +193,38 @@ const SingleTeacherPage = async ({
               className="p-3 rounded-md bg-MySchoolSkyLight"
               href={`/list/classes?supervisorId=${"teacher2"}`}
             >
-              Teacher's Classes
+              Teacher&#39;s Classes
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolPurpleLight"
               href={`/list/students?teacherId=${"teacher2"}`}
             >
               {" "}
-              Teacher's Students
+              Teacher&#39;s Students
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolYellowLight"
               href={`/list/lessons?teacherId=${"teacher2"}`}
             >
-              Teacher's Lessons
+              Teacher&#39;s Lessons
             </Link>
             <Link
               className="p-3 rounded-md bg-pink-50"
               href={`/list/exams?teacherId=${"teacher2"}`}
             >
-              Teacher's Exams
+              Teacher&#39;s Exams
             </Link>
             <Link
               className="p-3 rounded-md bg-MySchoolSkyLight"
               href={`/list/assignments?teacherId=${"teacher2"}`}
             >
-              Teacher's Assignments
+              Teacher&#39;s Assignments
             </Link>
           </div>
         </div>
 
         <Performance />
-        {/* @ts-expect-error Server Component */}
+
         <Announcements />
       </div>
     </div>

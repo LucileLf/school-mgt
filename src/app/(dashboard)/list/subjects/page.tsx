@@ -5,20 +5,19 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { Prisma, Subject, Teacher} from "@prisma/client";
+import { Prisma, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import FormContainer from "@/components/FormContainer";
 
-type SubjectList = Subject &  {teachers: Teacher[]}
+type SubjectList = Subject & { teachers: Teacher[] };
 
 const SubjectListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-
   const { sessionClaims } = auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
@@ -45,14 +44,16 @@ const SubjectListPage = async ({
       className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
     >
       <td className="flex items-center gap-4 p-4">{item.name}</td>
-      <td className="hidden md:table-cell">{item.teachers.map(teacher=>teacher.name).join(", ")}</td>
+      <td className="hidden md:table-cell">
+        {item.teachers.map((teacher) => teacher.name).join(", ")}
+      </td>
       <td>
         <div className="flex items-center gap-2">
           {/* no condition because only admin can see this page */}
-            {/* @ts-expect-error Server Component */}
-            <FormContainer table="subject" type="update" data={item} />
-            {/* @ts-expect-error Server Component */}
-            <FormContainer table="subject" type="delete" id={item.id} />
+
+          <FormContainer table="subject" type="update" data={item} />
+
+          <FormContainer table="subject" type="delete" id={item.id} />
         </div>
       </td>
     </tr>
@@ -62,15 +63,17 @@ const SubjectListPage = async ({
   const p = page ? parseInt(page) : 1;
 
   // URL PARAMS CONDITION
-  const query:Prisma.SubjectWhereInput = {};
+  const query: Prisma.SubjectWhereInput = {};
 
   if (queryParams) {
-    for(const [key, value] of Object.entries(queryParams)){
-      if(value !== undefined){
-      switch(key){
-        case "search":query.name={contains:value, mode:"insensitive"};
-          break;
-      }}
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "search":
+            query.name = { contains: value, mode: "insensitive" };
+            break;
+        }
+      }
     }
   }
 
@@ -81,10 +84,10 @@ const SubjectListPage = async ({
         teachers: true,
       },
       take: ITEM_PER_PAGE,
-      skip: ITEM_PER_PAGE * (p - 1) // skip items from previous pages
+      skip: ITEM_PER_PAGE * (p - 1), // skip items from previous pages
     }),
-    prisma.subject.count({where:query})
-  ])
+    prisma.subject.count({ where: query }),
+  ]);
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -100,15 +103,15 @@ const SubjectListPage = async ({
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-MySchoolYellow">
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-              {/* @ts-expect-error Server Component */}
-              <FormContainer table="subject" type="create" />
+
+            <FormContainer table="subject" type="create" />
           </div>
         </div>
       </div>
       {/* LIST */}
       <Table columns={columns} renderRow={renderRow} data={subjectsData} />
       {/* PAGINATION */}
-      <Pagination page={p} count={subjectsCount}/>
+      <Pagination page={p} count={subjectsCount} />
     </div>
   );
 };
