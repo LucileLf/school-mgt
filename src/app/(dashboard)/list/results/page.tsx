@@ -5,8 +5,7 @@ import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import {
   Prisma,
   Result,
@@ -19,7 +18,6 @@ import {
   Exam,
 } from "@prisma/client";
 import Image from "next/image";
-import Link from "next/link";
 
 type ResultList = {
   id: number;
@@ -33,80 +31,84 @@ type ResultList = {
   date: Date;
 };
 
-const columns = [
-  {
-    header: "Title",
-    accessor: "title",
-  },
-  {
-    header: "Student",
-    accessor: "student",
-  },
-  {
-    header: "Score",
-    accessor: "score",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Teacher",
-    accessor: "teacher",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Class",
-    accessor: "class",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Date",
-    accessor: "date",
-    className: "hidden md:table-cell",
-  },
-  ...(role === "admin" || role === "teacher"
-    ? [
-        {
-          header: "Actions",
-          accessor: "action",
-        },
-      ]
-    : []),
-];
-//student*
-//score*
-//assignment or exam? -> date  +  lesson: class, teacher, subbject
-const renderRow = (item: ResultList) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.studentName + " " + item.studentSurname}</td>
-    <td className="hidden md:table-cell">{item.score}</td>
-    <td className="hidden md:table-cell">
-      {item.teacherName + " " + item.teacherSurname}
-    </td>
-    <td className="hidden md:table-cell">{item.className}</td>
-    <td className="hidden md:table-cell">
-      {new Intl.DateTimeFormat("fr-FR").format(item.date)}
-    </td>
-    <td>
-      <div className="flex items-center gap-2">
-        {(role === "admin" || role === "teacher") && (
-          <>
-            <FormModal table="result" type="update" id={item.id} />
-            <FormModal table="result" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
 
 const ResultListPage = async ({
   searchParams,
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
+
+  const { sessionClaims, userId } = auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+  const columns = [
+    {
+      header: "Title",
+      accessor: "title",
+    },
+    {
+      header: "Student",
+      accessor: "student",
+    },
+    {
+      header: "Score",
+      accessor: "score",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Teacher",
+      accessor: "teacher",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Class",
+      accessor: "class",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Date",
+      accessor: "date",
+      className: "hidden md:table-cell",
+    },
+    ...(role === "admin" || role === "teacher"
+      ? [
+          {
+            header: "Actions",
+            accessor: "action",
+          },
+        ]
+      : []),
+  ];
+  //student*
+  //score*
+  //assignment or exam? -> date  +  lesson: class, teacher, subject
+  const renderRow = (item: ResultList) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-MySchoolPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">{item.title}</td>
+      <td>{item.studentName + " " + item.studentSurname}</td>
+      <td className="hidden md:table-cell">{item.score}</td>
+      <td className="hidden md:table-cell">
+        {item.teacherName + " " + item.teacherSurname}
+      </td>
+      <td className="hidden md:table-cell">{item.className}</td>
+      <td className="hidden md:table-cell">
+        {new Intl.DateTimeFormat("fr-FR").format(item.date)}
+      </td>
+      <td>
+        <div className="flex items-center gap-2">
+          {(role === "admin" || role === "teacher") && (
+            <>
+              <FormModal table="result" type="update" id={item.id} />
+              <FormModal table="result" type="delete" id={item.id} />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
   // console.log(searchParams);
   const { page, ...queryParams } = searchParams;
   const p = page ? parseInt(page) : 1;
@@ -144,15 +146,15 @@ const ResultListPage = async ({
       break;
     case "teacher":
       query.OR = [
-        { exam: { lesson: { teacherId: currentUserId! } } },
-        { assignment: { lesson: { teacherId: currentUserId! } } },
+        { exam: { lesson: { teacherId: userId! } } },
+        { assignment: { lesson: { teacherId: userId! } } },
       ];
       break;
     case "student":
-      query.studentId = currentUserId!;
+      query.studentId = userId!;
       break;
     case "parent":
-      query.student = { parentId: currentUserId! };
+      query.student = { parentId: userId! };
       break;
   }
 
